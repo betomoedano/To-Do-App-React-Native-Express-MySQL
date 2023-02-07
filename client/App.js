@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet } from "react-native";
+import InputTask from "./components/InputTask";
+import Task from "./components/Task";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
@@ -19,24 +21,14 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={todos}
-        contentContainerStyle={{
-          padding: 15,
-        }}
+        contentContainerStyle={styles.contentContainerStyle}
         keyExtractor={(todo) => todo.id}
-        renderItem={({ item }) => (
-          <View>
-            <Text>ID: {item.id}</Text>
-            <Text>Task: {item.title}</Text>
-            <Text>Shared with: {item.shared_with_id}</Text>
-            <Text>
-              Status: {item.completed === 0 ? "Incompleted" : "Completed"}
-            </Text>
-          </View>
-        )}
+        renderItem={({ item }) => <Task {...item} />}
       />
+      <InputTask />
     </SafeAreaView>
   );
 }
@@ -44,8 +36,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#E9E9EF",
+  },
+  contentContainerStyle: {
+    padding: 15,
   },
 });
