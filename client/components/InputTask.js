@@ -52,12 +52,13 @@ export default function InputTask({ todos, setTodos }) {
         },
         method: "POST",
         body: JSON.stringify({
-          user_id: 2,
+          user_id: 1,
           title: messageBody,
         }),
       });
-      const data = await response.json();
-      console.log("created", data);
+      const newTodo = await response.json();
+      setTodos([...todos, { ...newTodo, shared_with_id: null }]);
+      Keyboard.dismiss();
       setMessageBody("");
     }
   };

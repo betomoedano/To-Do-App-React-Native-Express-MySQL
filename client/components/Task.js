@@ -1,10 +1,33 @@
 import * as React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-function CheckMark({ completed }) {
+function CheckMark({ id, completed, toggleTodo }) {
+  async function toggle() {
+    const response = await fetch(`http://localhost:8080/todos/${id}`, {
+      headers: {
+        "x-api-key": "abcdef123456",
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      body: JSON.stringify({
+        value: completed ? 0 : 1,
+      }),
+    });
+    const data = await response.json();
+    toggleTodo(id);
+    console.log(data);
+  }
+
   return (
     <Pressable
+      onPress={toggle}
       style={[
         styles.checkMark,
         { backgroundColor: completed === 0 ? "#E9E9EF" : "#0EA5E9" },
@@ -13,11 +36,35 @@ function CheckMark({ completed }) {
   );
 }
 
-export default function Task({ id, title, shared_with_id, completed }) {
+export default function Task({
+  id,
+  title,
+  shared_with_id,
+  completed,
+  clearTodo,
+  toggleTodo,
+}) {
+  const [isDeleteActive, setIsDeleteActive] = React.useState(false);
+  async function deleteTodo() {
+    const response = await fetch(`http://localhost:8080/todos/${id}`, {
+      headers: {
+        "x-api-key": "abcdef123456",
+      },
+      method: "DELETE",
+    });
+    clearTodo(id);
+    console.log(response.status);
+  }
+
   return (
-    <View style={[styles.container]}>
+    <TouchableOpacity
+      onLongPress={() => setIsDeleteActive(true)}
+      onPress={() => setIsDeleteActive(false)}
+      activeOpacity={0.8}
+      style={[styles.container]}
+    >
       <View style={styles.containerTextCheckBox}>
-        <CheckMark completed={completed} />
+        <CheckMark id={id} completed={completed} toggleTodo={toggleTodo} />
         <Text style={styles.text}>{title}</Text>
       </View>
       {shared_with_id !== null ? (
@@ -25,7 +72,12 @@ export default function Task({ id, title, shared_with_id, completed }) {
       ) : (
         <Feather name="share" size={20} color="#383839" />
       )}
-    </View>
+      {isDeleteActive && (
+        <Pressable onPress={deleteTodo} style={styles.deleteButton}>
+          <Text style={{ color: "white", fontWeight: "bold" }}>x</Text>
+        </Pressable>
+      )}
+    </TouchableOpacity>
   );
 }
 
@@ -57,5 +109,16 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 7,
+  },
+  deleteButton: {
+    position: "absolute",
+    right: 0,
+    top: -6,
+    width: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ef4444",
+    borderRadius: 10,
   },
 });

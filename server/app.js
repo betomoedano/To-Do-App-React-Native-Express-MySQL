@@ -1,5 +1,12 @@
 import express from "express";
-import { getTodo, getTodosByID, createTodo } from "./database.js";
+import {
+  getTodo,
+  shareTodo,
+  deleteTodo,
+  getTodosByID,
+  createTodo,
+  toggleCompleted,
+} from "./database.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 
@@ -36,6 +43,23 @@ app.get("/todos/:id", async (req, res) => {
   res.status(200).send(todos);
 });
 
+app.put("/todos/:id", async (req, res) => {
+  const { value } = req.body;
+  const todo = await toggleCompleted(req.params.id, value);
+  res.status(200).send(todo);
+});
+
+app.delete("/todos/:id", async (req, res) => {
+  await deleteTodo(req.params.id);
+  res.send({ message: "Todo deleted successfully" });
+});
+
+app.post("/todos/shared_todos", async (req, res) => {
+  const { todo_id, user_id, shared_with_id } = req.body;
+  const sharedTodo = await shareTodo(todo_id, user_id, shared_with_id);
+  res.status(201).send(sharedTodo);
+});
+
 // app.get("/todos/:id", async (req, res) => {
 //   const id = req.params.id;
 //   const todo = await getTodo(id);
@@ -43,7 +67,6 @@ app.get("/todos/:id", async (req, res) => {
 // });
 
 app.post("/todos", async (req, res) => {
-  console.log(req.body);
   const { user_id, title } = req.body;
   const todo = await createTodo(user_id, title);
   res.status(201).send(todo);

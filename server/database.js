@@ -41,6 +41,39 @@ export async function createTodo(user_id, title) {
   return getTodo(todoID);
 }
 
+export async function deleteTodo(id) {
+  const [result] = await pool.query(
+    `
+    DELETE FROM todos WHERE id = ?;
+    `,
+    [id]
+  );
+  return result;
+}
+
+export async function toggleCompleted(id, value) {
+  const newValue = value === true ? "TRUE" : "FALSE";
+  const [result] = await pool.query(
+    `
+    UPDATE todos
+    SET completed = ${newValue} 
+    WHERE id = ?;
+    `,
+    [id]
+  );
+  return result;
+}
+
+export async function shareTodo(todo_id, user_id, shared_with_id) {
+  const [result] = await pool.query(
+    `
+    INSERT INTO shared_todos (todo_id, user_id, shared_with_id) 
+    VALUES (?, ?, ?);
+    `,
+    [todo_id, user_id, shared_with_id]
+  );
+  return result.insertId;
+}
 /**
  * Tests for development
  */
@@ -51,3 +84,7 @@ export async function createTodo(user_id, title) {
 
 // const todoByID = await getTodo(2);
 // console.log(todoByID);
+
+// await deleteTodo(2);
+
+// await shareTodo(13, 2, 1);

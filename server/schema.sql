@@ -47,11 +47,20 @@ VALUES (16, 2);
 INSERT INTO users (name, email, password) VALUES ('Beto', 'user1@example.com', 'password1');
 INSERT INTO users (name, email, password) VALUES ('Alberto', 'user2@example.com', 'password2');
 
--- Insert five todos into the todos table, associated with the first user
-INSERT INTO todos (user_id, title) VALUES (1, 'Todo 1');
-INSERT INTO todos (user_id, title) VALUES (1, 'Todo 2');
-INSERT INTO todos (user_id, title) VALUES (2, 'Todo 3');
-INSERT INTO todos (user_id, title) VALUES (2, 'Todo 4');
+-- Insert todos into the todos table, associated with the first user
+INSERT INTO todos (title, user_id) 
+VALUES 
+("🏃‍♀️ Go for a morning run 🌄", 1),
+("💻 Work on project presentation 💼", 1),
+("🛒 Go grocery shopping 🛍️", 1),
+("📚 Read 30 pages of book 📖", 1),
+("🚴‍♂️ Ride bike to the park 🌳", 1),
+("🍲 Cook dinner for family 🍴", 1),
+("💆‍♂️ Practice yoga 🧘‍♂️", 1),
+("🎧 Listen to a podcast 🎤", 1),
+("🧹 Clean the house 🧼", 1),
+("🛌 Get 8 hours of sleep 💤", 1);
+
 
 -- share todo 1 of user 1 with user 2
 INSERT INTO shared_todos (todo_id, user_id, shared_with_id) VALUES (1, 1, 2);

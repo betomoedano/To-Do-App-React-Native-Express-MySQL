@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet } from "react-native";
+import { Text, FlatList, SafeAreaView, StyleSheet } from "react-native";
 import InputTask from "./components/InputTask";
 import Task from "./components/Task";
 
@@ -11,7 +11,7 @@ export default function App() {
   }, []);
 
   async function fetchTodos() {
-    const response = await fetch("http://localhost:8080/todos/2", {
+    const response = await fetch("http://localhost:8080/todos/1", {
       headers: {
         "x-api-key": "abcdef123456",
       },
@@ -20,13 +20,30 @@ export default function App() {
     setTodos(data);
   }
 
+  function clearTodo(id) {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  }
+
+  function toggleTodo(id) {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id
+          ? { ...todo, completed: todo.completed === 1 ? 0 : 1 }
+          : todo
+      )
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={todos}
         contentContainerStyle={styles.contentContainerStyle}
         keyExtractor={(todo) => todo.id}
-        renderItem={({ item }) => <Task {...item} />}
+        renderItem={({ item }) => (
+          <Task {...item} toggleTodo={toggleTodo} clearTodo={clearTodo} />
+        )}
+        ListHeaderComponent={() => <Text style={styles.title}>Today</Text>}
       />
       <InputTask todos={todos} setTodos={setTodos} />
     </SafeAreaView>
@@ -40,5 +57,10 @@ const styles = StyleSheet.create({
   },
   contentContainerStyle: {
     padding: 15,
+  },
+  title: {
+    fontWeight: "800",
+    fontSize: 28,
+    marginBottom: 15,
   },
 });
