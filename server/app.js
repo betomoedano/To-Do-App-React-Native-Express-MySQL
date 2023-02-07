@@ -1,5 +1,6 @@
 import express from "express";
 import { getTodo, getTodosByID, createTodo } from "./database.js";
+import bodyParser from "body-parser";
 import cors from "cors";
 
 const corsOptions = {
@@ -24,7 +25,9 @@ const ckeckApiKey = (req, res, next) => {
 };
 
 const app = express();
+app.use(bodyParser.json());
 app.use(express.json());
+// app.use(cors());
 app.use(cors(corsOptions));
 app.use(ckeckApiKey);
 
@@ -40,8 +43,9 @@ app.get("/todos/:id", async (req, res) => {
 // });
 
 app.post("/todos", async (req, res) => {
-  const { title, notes } = req.body;
-  const todo = await createTodo(title, notes);
+  console.log(req.body);
+  const { user_id, title } = req.body;
+  const todo = await createTodo(user_id, title);
   res.status(201).send(todo);
 });
 

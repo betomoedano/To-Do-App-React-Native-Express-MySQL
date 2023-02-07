@@ -17,8 +17,9 @@ export async function getTodosByID(id) {
     SELECT todos.*, shared_todos.shared_with_id
     FROM todos
     LEFT JOIN shared_todos ON todos.id = shared_todos.todo_id
-    WHERE todos.user_id = ${id} OR shared_todos.shared_with_id = ${id} 
-  `
+    WHERE todos.user_id = ? OR shared_todos.shared_with_id = ?
+  `,
+    [id, id]
   );
   return rows;
 }
@@ -28,16 +29,16 @@ export async function getTodo(id) {
   return rows[0];
 }
 
-export async function createTodo(title, notes) {
+export async function createTodo(user_id, title) {
   const [result] = await pool.query(
     `
-    INSERT INTO todos (title, notes)
+    INSERT INTO todos (user_id, title)
     VALUES (?, ?)
   `,
-    [title, notes]
+    [user_id, title]
   );
-  const id = result.insertId;
-  return getTodo(id);
+  const todoID = result.insertId;
+  return getTodo(todoID);
 }
 
 /**

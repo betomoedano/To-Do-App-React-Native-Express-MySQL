@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-export default function InputTask(props) {
+export default function InputTask({ todos, setTodos }) {
   const [showEmojies, setShowEmojies] = useState(false);
   const [messageBody, setMessageBody] = useState("");
   const [fadeAnim] = useState(new Animated.Value(0.1));
@@ -45,6 +45,19 @@ export default function InputTask(props) {
     if (messageBody === "") {
       return;
     } else {
+      const response = await fetch("http://localhost:8080/todos", {
+        headers: {
+          "x-api-key": "abcdef123456",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          user_id: 2,
+          title: messageBody,
+        }),
+      });
+      const data = await response.json();
+      console.log("created", data);
       setMessageBody("");
     }
   };

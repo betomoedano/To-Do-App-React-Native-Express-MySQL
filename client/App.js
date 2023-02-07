@@ -28,7 +28,7 @@ export default function App() {
         keyExtractor={(todo) => todo.id}
         renderItem={({ item }) => <Task {...item} />}
       />
-      <InputTask />
+      <InputTask todos={todos} setTodos={setTodos} />
     </SafeAreaView>
   );
 }
