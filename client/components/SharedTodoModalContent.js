@@ -30,7 +30,7 @@ export default function SharedTodoModalContent({
 
   return (
     <View style={styles.contentContainer}>
-      <Text style={[styles.title, { marginBottom: 20 }]}>Shared Taks</Text>
+      <Text style={[styles.title, { marginBottom: 20 }]}>Shared Tasks</Text>
       <Text style={[styles.title, { marginBottom: 20 }]}>"{title}"</Text>
       <Text style={[styles.title]}>Status</Text>
       <View
