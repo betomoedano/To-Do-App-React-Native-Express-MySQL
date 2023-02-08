@@ -12,6 +12,7 @@ import "react-native-gesture-handler";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRef, useState } from "react";
 import TodoModalContent from "./TodoModalContent";
+import SharedTodoModalContent from "./SharedTodoModalContent";
 
 function CheckMark({ id, completed, toggleTodo }) {
   async function toggle() {
@@ -53,9 +54,14 @@ export default function Task({
   const bottomSheetModalRef = useRef(null);
   const sharedBottomSheetRef = useRef(null);
   const snapPoints = ["25%", "48%", "75%"];
+  const snapPointsShared = ["40%"];
 
   function handlePresentModal() {
     bottomSheetModalRef.current?.present();
+  }
+
+  function handlePresentShared() {
+    sharedBottomSheetRef.current?.present();
   }
 
   async function deleteTodo() {
@@ -81,7 +87,12 @@ export default function Task({
         <Text style={styles.text}>{title}</Text>
       </View>
       {shared_with_id !== null ? (
-        <Feather name="users" size={20} color="#383839" />
+        <Feather
+          onPress={handlePresentShared}
+          name="users"
+          size={20}
+          color="#383839"
+        />
       ) : (
         <Feather
           onPress={handlePresentModal}
@@ -97,14 +108,16 @@ export default function Task({
       )}
       {/* shared todos info */}
       <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={2}
-        snapPoints={snapPoints}
+        ref={sharedBottomSheetRef}
+        snapPoints={snapPointsShared}
         backgroundStyle={{ borderRadius: 50, borderWidth: 4 }}
       >
-        <Text style={{ color: "white", fontWeight: "bold" }}>
-          Sharing stuff
-        </Text>
+        <SharedTodoModalContent
+          id={id}
+          title={title}
+          shared_with_id={shared_with_id}
+          completed={completed}
+        />
       </BottomSheetModal>
 
       <BottomSheetModal

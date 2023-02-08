@@ -7,6 +7,8 @@ import {
   createTodo,
   toggleCompleted,
   getUserByEmail,
+  getUserByID,
+  getSharedTodoByID,
 } from "./database.js";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -42,6 +44,18 @@ app.use(ckeckApiKey);
 app.get("/todos/:id", async (req, res) => {
   const todos = await getTodosByID(req.params.id);
   res.status(200).send(todos);
+});
+
+app.get("/todos/shared_todos/:id", async (req, res) => {
+  const todo = await getSharedTodoByID(req.params.id);
+  const author = await getUserByID(todo.user_id);
+  const shared_with = await getUserByID(todo.shared_with_id);
+  res.status(200).send({ author, shared_with });
+});
+
+app.get("/users/:id", async (req, res) => {
+  const user = await getUserByID(req.params.id);
+  res.status(200).send(user);
 });
 
 app.put("/todos/:id", async (req, res) => {

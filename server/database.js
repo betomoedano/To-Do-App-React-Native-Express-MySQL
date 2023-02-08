@@ -29,6 +29,19 @@ export async function getTodo(id) {
   return rows[0];
 }
 
+export async function getSharedTodoByID(id) {
+  const [rows] = await pool.query(
+    `SELECT * FROM shared_todos WHERE todo_id = ?`,
+    [id]
+  );
+  return rows[0];
+}
+
+export async function getUserByID(id) {
+  const [rows] = await pool.query(`SELECT * FROM users WHERE id = ?`, [id]);
+  return rows[0];
+}
+
 export async function getUserByEmail(email) {
   const [rows] = await pool.query(`SELECT * FROM users WHERE email = ?`, [
     email,
