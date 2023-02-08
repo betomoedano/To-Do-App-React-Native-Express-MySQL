@@ -5,8 +5,13 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import "react-native-gesture-handler";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useRef, useState } from "react";
+import TodoModalContent from "./TodoModalContent";
 
 function CheckMark({ id, completed, toggleTodo }) {
   async function toggle() {
@@ -17,7 +22,7 @@ function CheckMark({ id, completed, toggleTodo }) {
       },
       method: "PUT",
       body: JSON.stringify({
-        value: completed ? 0 : 1,
+        value: completed ? false : true,
       }),
     });
     const data = await response.json();
@@ -45,6 +50,14 @@ export default function Task({
   toggleTodo,
 }) {
   const [isDeleteActive, setIsDeleteActive] = React.useState(false);
+  const bottomSheetModalRef = useRef(null);
+  const sharedBottomSheetRef = useRef(null);
+  const snapPoints = ["25%", "48%", "75%"];
+
+  function handlePresentModal() {
+    bottomSheetModalRef.current?.present();
+  }
+
   async function deleteTodo() {
     const response = await fetch(`http://localhost:8080/todos/${id}`, {
       headers: {
@@ -70,13 +83,38 @@ export default function Task({
       {shared_with_id !== null ? (
         <Feather name="users" size={20} color="#383839" />
       ) : (
-        <Feather name="share" size={20} color="#383839" />
+        <Feather
+          onPress={handlePresentModal}
+          name="share"
+          size={20}
+          color="#383839"
+        />
       )}
       {isDeleteActive && (
         <Pressable onPress={deleteTodo} style={styles.deleteButton}>
           <Text style={{ color: "white", fontWeight: "bold" }}>x</Text>
         </Pressable>
       )}
+      {/* shared todos info */}
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={2}
+        snapPoints={snapPoints}
+        backgroundStyle={{ borderRadius: 50, borderWidth: 4 }}
+      >
+        <Text style={{ color: "white", fontWeight: "bold" }}>
+          Sharing stuff
+        </Text>
+      </BottomSheetModal>
+
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={2}
+        snapPoints={snapPoints}
+        backgroundStyle={{ borderRadius: 50, borderWidth: 4 }}
+      >
+        <TodoModalContent id={id} title={title} />
+      </BottomSheetModal>
     </TouchableOpacity>
   );
 }
@@ -120,5 +158,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#ef4444",
     borderRadius: 10,
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 15,
+  },
+  row: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginVertical: 10,
+  },
+  title: {
+    fontWeight: "900",
+    letterSpacing: 0.5,
+    fontSize: 16,
+  },
+  subtitle: {
+    color: "#101318",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  description: {
+    color: "#56636F",
+    fontSize: 13,
+    fontWeight: "normal",
+    width: "100%",
   },
 });

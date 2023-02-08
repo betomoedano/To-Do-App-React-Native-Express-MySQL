@@ -6,6 +6,7 @@ import {
   getTodosByID,
   createTodo,
   toggleCompleted,
+  getUserByEmail,
 } from "./database.js";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -55,8 +56,10 @@ app.delete("/todos/:id", async (req, res) => {
 });
 
 app.post("/todos/shared_todos", async (req, res) => {
-  const { todo_id, user_id, shared_with_id } = req.body;
-  const sharedTodo = await shareTodo(todo_id, user_id, shared_with_id);
+  const { todo_id, user_id, email } = req.body;
+  // const { todo_id, user_id, shared_with_id } = req.body;
+  const userToShare = await getUserByEmail(email);
+  const sharedTodo = await shareTodo(todo_id, user_id, userToShare.id);
   res.status(201).send(sharedTodo);
 });
 

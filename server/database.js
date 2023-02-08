@@ -29,6 +29,14 @@ export async function getTodo(id) {
   return rows[0];
 }
 
+export async function getUserByEmail(email) {
+  const [rows] = await pool.query(`SELECT * FROM users WHERE email = ?`, [
+    email,
+  ]);
+  // console.log(rows[0]);
+  return rows[0];
+}
+
 export async function createTodo(user_id, title) {
   const [result] = await pool.query(
     `
