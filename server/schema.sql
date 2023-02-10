@@ -33,10 +33,11 @@ CREATE TABLE todos (
 CREATE TABLE shared_todos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   todo_id INT,
-  user_id INT,
-  FOREIGN KEY (todo_id) REFERENCES todos(id),
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  shared_with_id INT,
+  FOREIGN KEY (todo_id) REFERENCES todos(id) ON DELETE CASCADE,
+  FOREIGN KEY (shared_with_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 
 -- Share todo 
 -- Assuming that the todo you want to share has an id of 1
@@ -86,5 +87,5 @@ WHERE shared_todos.user_id = 2; -- Filter only the shared todos assigned to user
 SELECT todos.*, shared_todos.shared_with_id
 FROM todos
 LEFT JOIN shared_todos ON todos.id = shared_todos.todo_id
-WHERE todos.user_id = [user_id] OR shared_todos.shared_with_id = [user_id]
+WHERE todos.user_id = [user_id] OR shared_todos.shared_with_id = [user_id];
 
